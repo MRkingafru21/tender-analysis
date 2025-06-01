@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прогноз успешности тендера</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .success {
+            background: #dff0d8;
+            color: #3c763d;
+            border: 1px solid #d6e9c6;
+        }
+        .failure {
+            background: #f2dede;
+            color: #a94442;
+            border: 1px solid #ebccd1;
+        }
+        .error {
+            color: #ff0000;
+            background: #ffeeee;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Прогноз успешности тендера / Forecast of the success of the tender</h1>
+        
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+        
+        <form method="post" action="/predict">
+            <div class="form-group">
+                <label for="tender_name">Название тендера / ame of the tender:</label>
+                <input type="text" id="tender_name" name="tender_name" 
+                       value="{{ form_data.tender_name if form_data else '' }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="start_price">Начальная цена (RUB) / Initial price (RUB):</label>
+                <input type="number" id="start_price" name="start_price" 
+                       value="{{ form_data.start_price if form_data else '' }}" step="0.01" min="0" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="tender_security">Обеспечение заявки (RUB) / Securing the application (RUB):</label>
+                <input type="number" id="tender_security" name="tender_security" 
+                       value="{{ form_data.tender_security if form_data else '' }}" step="0.01" min="0" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="advance_money">Аванс (например, 30% или 0.3) / Advance payment (for example, 30% or 0.3%):</label>
+                <input type="text" id="advance_money" name="advance_money" 
+                       value="{{ form_data.advance_money if form_data else '' }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="procedure">Процедура закупки / Purchase procedure:</label>
+                <select id="procedure" name="procedure" required>
+                    <option value="Электронный аукцион" {% if form_data and form_data.procedure == 'Электронный аукцион' %}selected{% endif %}>Электронный аукцион</option>
+                    <option value="Конкурс" {% if form_data and form_data.procedure == 'Конкурс' %}selected{% endif %}>Конкурс</option>
+                    <option value="Запрос котировок" {% if form_data and form_data.procedure == 'Запрос котировок' %}selected{% endif %}>Запрос котировок</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="publication_date">Дата публикации / Date of publication:</label>
+                <input type="date" id="publication_date" name="publication_date" 
+                       value="{{ form_data.publication_date if form_data else '' }}" required>
+            </div>
+            
+            <input type="hidden" name="legislation" value="44-ФЗ">
+            <input type="hidden" name="currency" value="RUB">
+            
+            <button type="submit">Предсказать успешность / Predict success</button>
+        </form>
+        
+        {% if result %}
+            <div class="result {{ result.success_class }}">
+                <h2>Результат прогноза: {{ result.success_text }}</h2>
+                <p>Вероятность успеха: {{ result.probability_percent }}%</p>
+                <p>Уверенность прогноза: {{ result.confidence_percent }}%</p>
+                <p>Порог классификации: {{ (result.threshold * 100)|round(2) }}%</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
