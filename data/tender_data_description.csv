@@ -1,0 +1,20 @@
+col_name,ru_definition,en_definition,type
+tender_id,Номер,ID,string
+tender_name,Название тендера (что покупают),The name of the tender (services or goods bought),string
+start_price,Начальная максимальная цена,The initial maximum price,float
+tender_security,Обеспечение заявки,Tender security sum,float
+advance_money,Аванс,Advance money,float
+currency,Валюта закупки,Currency of purchases,string
+publication_date,Дата публикации,Publication Date,datetime
+selection_phase,Этап отбора,Selection Phase,string
+legislation,Тип торгов,Trading legislation,string
+url,Ссылка,URL,string
+procedure,Способ отбора,Selection procedure,string
+for_small_business,СМП,Is the tender for small business,boolean
+customer_region_code,Регион (код),Customer region (Code),string
+customer_region,Регион,Customer region,string
+customer_name,Название заказчика,The name of the customer,string
+customer_inn,ИНН заказчика,IIN of the customer,string
+winner_name,Название победителя,The name of the winner,string
+winner_inn,ИНН победителя,IIN of the winner,string
+final_price,Предложение победителя,Final price from the winner,string
